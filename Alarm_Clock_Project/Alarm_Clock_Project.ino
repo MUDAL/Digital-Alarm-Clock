@@ -22,7 +22,6 @@ RTC_DS3231 rtc;
 
 void setup(void) 
 {
-  // put your setup code here, to run once:
   Serial.begin(9600);
   pinMode(RESET_BUTTON,INPUT_PULLUP);
   InitHMIButtons();
@@ -33,18 +32,48 @@ void setup(void)
 
 void loop(void) 
 {
-  // put your main code here, to run repeatedly:
-  DisplayMenu(TIME);
-  if(IsPressed(UP_BUTTON))
+  static int menuParam = TIME;
+  static int state = STATE_MENU;
+  switch(state)
   {
-    Serial.println("Up pressed");
-  }    
-  if(IsPressed(SEL_BUTTON))
-  {
-    Serial.println("Select pressed");
-  }
-  if(IsPressed(DOWN_BUTTON))
-  {
-    Serial.println("Down pressed");
+    case STATE_MENU:
+      Display(menuParam);
+      Scroll(UP_BUTTON,&menuParam,TIME);
+      Scroll(DOWN_BUTTON,&menuParam,SONG); 
+      if(IsPressed(SEL_BUTTON))
+      {
+        switch(menuParam)
+        {
+          case TIME:
+            state = STATE_SETTIME;
+            break;
+          case ALARM:
+            state = STATE_SETALARM;
+            break;
+          case GAME:
+            state = STATE_PLAYGAME;
+            break;
+          case SONG:
+            state = STATE_PLAYSONG;
+            break;
+        }
+      }
+      break;
+
+    case STATE_SETTIME:
+      Serial.println("Setting time");
+      break;
+      
+    case STATE_SETALARM:
+      Serial.println("Setting alarm");
+      break;
+      
+    case STATE_PLAYGAME:
+      Serial.println("Playing game");
+      break;
+      
+    case STATE_PLAYSONG:
+      Serial.println("Playing song");
+      break;
   }
 }

@@ -18,7 +18,7 @@ static void DisplayAlignedTime(int t,char separator = '\0')
   }  
 }
 
-void DisplayMenu(MenuParam_t param)
+void Display(int param)
 {
   char time[] = "  Time: ";
   char alarm[] = "  Alarm";
@@ -53,3 +53,23 @@ void DisplayMenu(MenuParam_t param)
   lcd.setCursor(0,3);
   lcd.print(song);  
 }
+
+void Scroll(int button,int* param,int limit)
+{
+  if(IsPressed(button))
+  {
+    if(*param != limit)
+    {
+      switch(button)
+      {
+        case UP_BUTTON:
+          (*param)--;
+          break;
+        case DOWN_BUTTON:
+          (*param)++;
+          break;
+      }
+    }
+  }  
+}
+

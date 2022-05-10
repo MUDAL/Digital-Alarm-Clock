@@ -8,13 +8,22 @@
 #include "button.h"
 
 //Enums
-typedef enum
+enum MenuParams
 {
   TIME = 0,
   ALARM,
   GAME,
   SONG
-}MenuParam_t;
+};
+
+enum States
+{
+  STATE_MENU = 0,
+  STATE_SETTIME,
+  STATE_SETALARM,
+  STATE_PLAYGAME,
+  STATE_PLAYSONG
+};
 
 //Variables
 extern LiquidCrystal lcd;
@@ -22,6 +31,7 @@ extern IRrecv irReceiver;
 extern RTC_DS3231 rtc;
 
 //Functions
-extern void DisplayMenu(MenuParam_t param);
+extern void Display(int param);
+extern void Scroll(int button,int* param,int limit);
 
 #endif
