@@ -42,3 +42,13 @@ bool IsPressed(int button)
   }
   return false;
 }
+
+bool LongPress(int button)
+{
+  const int buttonPin[3] = {UP_PIN,SELECT_PIN,DOWN_PIN}; 
+  if(!digitalRead(buttonPin[button]))
+  {
+    return true;
+  }
+  return false;  
+}

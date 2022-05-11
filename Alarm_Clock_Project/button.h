@@ -10,5 +10,6 @@ enum Button
 
 extern void InitHMIButtons(void);
 extern bool IsPressed(int button);
+extern bool LongPress(int button);
 
 #endif

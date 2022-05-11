@@ -32,48 +32,81 @@ void setup(void)
 
 void loop(void) 
 {
-  static int menuParam = TIME;
   static int state = STATE_MENU;
-  switch(state)
-  {
-    case STATE_MENU:
-      Display(menuParam);
-      Scroll(UP_BUTTON,&menuParam,TIME);
-      Scroll(DOWN_BUTTON,&menuParam,SONG); 
-      if(IsPressed(SEL_BUTTON))
-      {
-        switch(menuParam)
-        {
-          case TIME:
-            state = STATE_SETTIME;
-            break;
-          case ALARM:
-            state = STATE_SETALARM;
-            break;
-          case GAME:
-            state = STATE_PLAYGAME;
-            break;
-          case SONG:
-            state = STATE_PLAYSONG;
-            break;
-        }
-      }
-      break;
+  static int hour;
+  static int minute;
+  irRecv_t irValue = GetIRRemoteVal();
 
-    case STATE_SETTIME:
-      Serial.println("Setting time");
-      break;
-      
-    case STATE_SETALARM:
-      Serial.println("Setting alarm");
-      break;
-      
-    case STATE_PLAYGAME:
-      Serial.println("Playing game");
-      break;
-      
-    case STATE_PLAYSONG:
-      Serial.println("Playing song");
-      break;
+  if(state == STATE_MENU)
+  {
+    const int minRow = 0;
+    const int maxRow = 3;
+    static int currentRow;
+    
+    DateTime dateTime = rtc.now();
+    hour = dateTime.hour();
+    minute = dateTime.minute();
+    DisplayMenu(currentRow);
+    
+    if(IsPressed(UP_BUTTON) || (irValue == KEY_UP))
+    {
+      Scroll(SCROLL_UP,&currentRow,minRow);
+    }
+    if(IsPressed(DOWN_BUTTON) || (irValue == KEY_DOWN))
+    {
+      Scroll(SCROLL_DOWN,&currentRow,maxRow); 
+    }
+    if(IsPressed(SEL_BUTTON) || (irValue == KEY_OK))
+    {
+      SelectMenuRow(&currentRow,&state);
+    }
+  }
+  
+  else if(state == STATE_SETTIME)
+  {
+    const int minRow = 0;
+    const int maxRow = 2;
+    static int currentRow;
+    
+    DisplayTimeScreen(currentRow,hour,minute);
+    if(IsPressed(UP_BUTTON) || (irValue == KEY_UP))
+    {
+      Scroll(SCROLL_UP,&currentRow,minRow);
+    }
+    if(IsPressed(DOWN_BUTTON) || (irValue == KEY_DOWN))
+    {
+      Scroll(SCROLL_DOWN,&currentRow,maxRow); 
+    }
+    if(IsPressed(SEL_BUTTON) || (irValue == KEY_OK))
+    {
+      switch(currentRow)
+      {
+        case 0:
+          SetTime(HOUR,&hour);
+          break;
+        case 1:
+          SetTime(MINUTE,&minute);
+          break;
+        case 2:
+          state = STATE_MENU;
+          break;
+      }
+      lcd.clear(); 
+    }
+  }
+  
+  else if(state == STATE_SETALARM)
+  {
+    static int currentRow;
+  }
+  
+  else if(state == STATE_PLAYGAME)
+  {
+    static int currentRow;
+  }
+  
+  else if(state == STATE_PLAYSONG)
+  {
+    static int currentRow;
   }
 }
