@@ -27,8 +27,7 @@ typedef enum
   KEY_9 = 0xFF5AA5,
   KEY_0 = 0xFF4AB5,
   KEY_STAR = 0xFF42BD,
-  KEY_HASH = 0xFF52AD,
-  KEY_LONGPRESS = 0xFFFFFFFF
+  KEY_HASH = 0xFF52AD
 }irRecv_t;
 
 typedef enum
@@ -45,11 +44,11 @@ typedef enum
 
 enum States
 {
-  STATE_MENU = 0,
-  STATE_SETTIME,
-  STATE_SETALARM,
-  STATE_PLAYGAME,
-  STATE_PLAYSONG
+  STATE_MAINMENU = 0,
+  STATE_TIMEMENU,
+  STATE_ALARMMENU,
+  STATE_GAMEMENU,
+  STATE_SONGMENU
 };
 
 //Variables
@@ -59,10 +58,18 @@ extern IRrecv irReceiver;
 
 //Functions
 extern void DisplayMenu(int currentRow);
-extern void Scroll(scroll_t dir,int* param,int limit);
-extern void SelectMenuRow(int* row,int* state);
+extern void Scroll(scroll_t dir,int& param,int limit);
+extern void SelectMenuRow(int& row,int& state);
 extern irRecv_t GetIRRemoteVal(void);
 extern void DisplayTimeScreen(int currentRow,int t_hour,int t_minute);
-extern void SetTime(time_t t,int* val);
+extern void SetTime(time_t t,int& time);
+extern void DisplayAlarmScreen(int currentRow);
+
+//State functions
+extern void StateFunction_MainMenu(int& state,irRecv_t& irValue,
+                                   int& hour,int& minute);
+extern void StateFunction_TimeMenu(int& state,irRecv_t& irValue,
+                                   int& hour,int& minute);
+extern void StateFunction_AlarmMenu(int& state,irRecv_t& irValue);
 
 #endif

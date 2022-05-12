@@ -32,81 +32,25 @@ void setup(void)
 
 void loop(void) 
 {
-  static int state = STATE_MENU;
+  static int state = STATE_MAINMENU;
   static int hour;
   static int minute;
   irRecv_t irValue = GetIRRemoteVal();
 
-  if(state == STATE_MENU)
+  switch(state)
   {
-    const int minRow = 0;
-    const int maxRow = 3;
-    static int currentRow;
-    
-    DateTime dateTime = rtc.now();
-    hour = dateTime.hour();
-    minute = dateTime.minute();
-    DisplayMenu(currentRow);
-    
-    if(IsPressed(UP_BUTTON) || (irValue == KEY_UP))
-    {
-      Scroll(SCROLL_UP,&currentRow,minRow);
-    }
-    if(IsPressed(DOWN_BUTTON) || (irValue == KEY_DOWN))
-    {
-      Scroll(SCROLL_DOWN,&currentRow,maxRow); 
-    }
-    if(IsPressed(SEL_BUTTON) || (irValue == KEY_OK))
-    {
-      SelectMenuRow(&currentRow,&state);
-    }
-  }
-  
-  else if(state == STATE_SETTIME)
-  {
-    const int minRow = 0;
-    const int maxRow = 2;
-    static int currentRow;
-    
-    DisplayTimeScreen(currentRow,hour,minute);
-    if(IsPressed(UP_BUTTON) || (irValue == KEY_UP))
-    {
-      Scroll(SCROLL_UP,&currentRow,minRow);
-    }
-    if(IsPressed(DOWN_BUTTON) || (irValue == KEY_DOWN))
-    {
-      Scroll(SCROLL_DOWN,&currentRow,maxRow); 
-    }
-    if(IsPressed(SEL_BUTTON) || (irValue == KEY_OK))
-    {
-      switch(currentRow)
-      {
-        case 0:
-          SetTime(HOUR,&hour);
-          break;
-        case 1:
-          SetTime(MINUTE,&minute);
-          break;
-        case 2:
-          state = STATE_MENU;
-          break;
-      }
-      lcd.clear(); 
-    }
-  }
-  
-  else if(state == STATE_SETALARM)
-  {
-    static int currentRow;
-  }
-  
-  else if(state == STATE_PLAYGAME)
-  {
-    static int currentRow;
-  }
-  
-  else if(state == STATE_PLAYSONG)
-  {
-    static int currentRow;
+    case STATE_MAINMENU:
+      StateFunction_MainMenu(state,irValue,hour,minute);
+      break;
+    case STATE_TIMEMENU:
+      StateFunction_TimeMenu(state,irValue,hour,minute);
+      break;
+    case STATE_ALARMMENU:
+      StateFunction_AlarmMenu(state,irValue);
+      break;
+    case STATE_GAMEMENU:
+      break;
+    case STATE_SONGMENU:
+      break;
   }
 }
