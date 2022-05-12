@@ -56,15 +56,7 @@ extern LiquidCrystal lcd;
 extern RTC_DS3231 rtc;
 extern IRrecv irReceiver;
 
-//Functions
-extern void DisplayMenu(int currentRow);
-extern void Scroll(scroll_t dir,int& param,int limit);
-extern void SelectMenuRow(int& row,int& state);
 extern irRecv_t GetIRRemoteVal(void);
-extern void DisplayTimeScreen(int currentRow,int t_hour,int t_minute);
-extern void SetTime(time_t t,int& time);
-extern void DisplayAlarmScreen(int currentRow);
-
 //State functions
 extern void StateFunction_MainMenu(int& state,irRecv_t& irValue,
                                    int& hour,int& minute);

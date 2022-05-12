@@ -18,7 +18,7 @@ static void DisplayAlignedTime(int t,char separator = '\0')
   }  
 }
 
-void DisplayMenu(int currentRow)
+static void DisplayMenu(int currentRow)
 {
   char time[] = "  Time: ";
   char alarm[] = "  Alarm";
@@ -40,7 +40,6 @@ void DisplayMenu(int currentRow)
       song[0] = '>';
       break;
   }
-  
   lcd.setCursor(0,0);
   lcd.print(time);
   DateTime currentTime = rtc.now();
@@ -54,7 +53,7 @@ void DisplayMenu(int currentRow)
   lcd.print(song);  
 }
 
-void Scroll(scroll_t dir,int& param,int limit)
+static void Scroll(scroll_t dir,int& param,int limit)
 {
   if(param != limit)
   {
@@ -70,39 +69,7 @@ void Scroll(scroll_t dir,int& param,int limit)
   }  
 }
 
-void SelectMenuRow(int& row,int& state)
-{
-  switch(row)
-  {
-    case 0:
-      state = STATE_TIMEMENU;
-      break;
-    case 1:
-      state = STATE_ALARMMENU;
-      break;
-    case 2:
-      state = STATE_GAMEMENU;
-      break;
-    case 3:
-      state = STATE_SONGMENU;
-      break;
-  }
-  lcd.clear();  
-}
-
-irRecv_t GetIRRemoteVal(void)
-{
-  decode_results irResult;
-  irRecv_t irValue = NO_KEY;
-  if(irReceiver.decode(&irResult))
-  {
-    irValue = irResult.value;
-    irReceiver.resume();
-  }
-  return irValue;
-}
-
-void DisplayTimeScreen(int currentRow,int t_hour,int t_minute)
+static void DisplayTimeScreen(int currentRow,int t_hour,int t_minute)
 {
   char hour[] = "  Hour: ";
   char minute[] = "  Minute: ";
@@ -120,7 +87,6 @@ void DisplayTimeScreen(int currentRow,int t_hour,int t_minute)
       back[0] = '>';
       break;
   }
-
   lcd.setCursor(0,0);
   lcd.print(hour);
   lcd.print(t_hour);
@@ -131,7 +97,7 @@ void DisplayTimeScreen(int currentRow,int t_hour,int t_minute)
   lcd.print(back); 
 }
 
-void SetTime(time_t t,int& time)
+static void SetTime(time_t t,int& time)
 {
   int row;
   int col; //for hour/minute's value on LCD screen
@@ -198,7 +164,7 @@ void SetTime(time_t t,int& time)
   }
 }
 
-void DisplayAlarmScreen(int currentRow)
+static void DisplayAlarmScreen(int currentRow)
 {
   char setAlarm[] = "  Set alarm ";
   char delAlarm[] = "  Delete alarm";
@@ -224,7 +190,19 @@ void DisplayAlarmScreen(int currentRow)
   lcd.print(back);    
 }
 
-//State functions
+//Extern functions
+irRecv_t GetIRRemoteVal(void)
+{
+  decode_results irResult;
+  irRecv_t irValue = NO_KEY;
+  if(irReceiver.decode(&irResult))
+  {
+    irValue = irResult.value;
+    irReceiver.resume();
+  }
+  return irValue;
+}
+
 void StateFunction_MainMenu(int& state,irRecv_t& irValue,int& hour,int& minute)
 {
   const int minRow = 0;
@@ -246,7 +224,22 @@ void StateFunction_MainMenu(int& state,irRecv_t& irValue,int& hour,int& minute)
   }
   if(IsPressed(SEL_BUTTON) || (irValue == KEY_OK))
   {
-    SelectMenuRow(currentRow,state);
+    switch(currentRow)
+    {
+      case 0:
+        state = STATE_TIMEMENU;
+        break;
+      case 1:
+        state = STATE_ALARMMENU;
+        break;
+      case 2:
+        state = STATE_GAMEMENU;
+        break;
+      case 3:
+        state = STATE_SONGMENU;
+        break;
+    }
+    lcd.clear(); 
   }  
 }
 
