@@ -1,102 +1,5 @@
 #include "app.h"
 
-static void DisplayAlignedTime(int t,char separator = '\0')
-{
-  //t = unaligned time
-  if(t < 10)
-  {
-    lcd.print('0');
-    lcd.print(t);
-  }
-  else
-  {
-    lcd.print(t);
-  }
-  if(separator != '\0')
-  {
-    lcd.print(separator);
-  }  
-}
-
-static void DisplayMenu(int currentRow)
-{
-  char time[] = "  Time: ";
-  char alarm[] = "  Alarm";
-  char game[] = "  Game";
-  char song[] = "  Song";
-
-  switch(currentRow)
-  {
-    case 0:
-      time[0] = '>';
-      break;
-    case 1:
-      alarm[0] = '>';
-      break;
-    case 2:
-      game[0] = '>';
-      break;
-    case 3:
-      song[0] = '>';
-      break;
-  }
-  lcd.setCursor(0,0);
-  lcd.print(time);
-  DateTime currentTime = rtc.now();
-  DisplayAlignedTime(currentTime.hour(),':');
-  DisplayAlignedTime(currentTime.minute());
-  lcd.setCursor(0,1);
-  lcd.print(alarm);
-  lcd.setCursor(0,2);
-  lcd.print(game);
-  lcd.setCursor(0,3);
-  lcd.print(song);  
-}
-
-static void Scroll(scroll_t dir,int& param,int limit)
-{
-  if(param != limit)
-  {
-    switch(dir)
-    {
-      case SCROLL_UP:
-        param--;
-        break;
-      case SCROLL_DOWN:
-        param++;
-        break;
-    }
-  }  
-}
-
-static void DisplayTimeScreen(int currentRow,int t_hour,int t_minute)
-{
-  char hour[] = "  Hour: ";
-  char minute[] = "  Minute: ";
-  char back[] = "  Back ";
-
-  switch(currentRow)
-  {
-    case 0:
-      hour[0] = '>';
-      break;
-    case 1:
-      minute[0] = '>';
-      break;
-    case 2:
-      back[0] = '>';
-      break;
-  }
-  lcd.setCursor(0,0);
-  lcd.print(hour);
-  lcd.print(t_hour);
-  lcd.setCursor(0,1);
-  lcd.print(minute);
-  lcd.print(t_minute);
-  lcd.setCursor(0,2);
-  lcd.print(back); 
-}
-
 static void SetTime(time_t t,int& time)
 {
   int row;
@@ -164,32 +67,6 @@ static void SetTime(time_t t,int& time)
   }
 }
 
-static void DisplayAlarmScreen(int currentRow)
-{
-  char setAlarm[] = "  Set alarm ";
-  char delAlarm[] = "  Delete alarm";
-  char back[] = "  Back";
-
-  switch(currentRow)
-  {
-    case 0:
-      setAlarm[0] = '>';
-      break;
-    case 1:
-      delAlarm[0] = '>';
-      break;
-    case 2:
-      back[0] = '>';
-      break;
-  }
-  lcd.setCursor(0,0);
-  lcd.print(setAlarm);
-  lcd.setCursor(0,1);
-  lcd.print(delAlarm);
-  lcd.setCursor(0,2);
-  lcd.print(back);    
-}
-
 //Extern functions
 irRecv_t GetIRRemoteVal(void)
 {
@@ -203,7 +80,7 @@ irRecv_t GetIRRemoteVal(void)
   return irValue;
 }
 
-void StateFunction_MainMenu(int& state,irRecv_t& irValue,int& hour,int& minute)
+void StateFunc_MainMenu(int& state,irRecv_t& irValue,int& hour,int& minute)
 {
   const int minRow = 0;
   const int maxRow = 3;
@@ -213,7 +90,7 @@ void StateFunction_MainMenu(int& state,irRecv_t& irValue,int& hour,int& minute)
   hour = dateTime.hour();
   minute = dateTime.minute();
   
-  DisplayMenu(currentRow);
+  DisplayMainMenu(currentRow);
   if(IsPressed(UP_BUTTON) || (irValue == KEY_UP))
   {
     Scroll(SCROLL_UP,currentRow,minRow);
@@ -243,13 +120,13 @@ void StateFunction_MainMenu(int& state,irRecv_t& irValue,int& hour,int& minute)
   }  
 }
 
-void StateFunction_TimeMenu(int& state,irRecv_t& irValue,int& hour,int& minute)
+void StateFunc_TimeMenu(int& state,irRecv_t& irValue,int& hour,int& minute)
 {
   const int minRow = 0;
   const int maxRow = 2;
   static int currentRow;
   
-  DisplayTimeScreen(currentRow,hour,minute);
+  DisplayTimeMenu(currentRow,hour,minute);
   if(IsPressed(UP_BUTTON) || (irValue == KEY_UP))
   {
     Scroll(SCROLL_UP,currentRow,minRow);
@@ -276,13 +153,13 @@ void StateFunction_TimeMenu(int& state,irRecv_t& irValue,int& hour,int& minute)
   }  
 }
 
-void StateFunction_AlarmMenu(int& state,irRecv_t& irValue)
+void StateFunc_AlarmMenu(int& state,irRecv_t& irValue)
 {
   const int minRow = 0;
   const int maxRow = 2;
   static int currentRow;
 
-  DisplayAlarmScreen(currentRow);
+  DisplayAlarmMenu(currentRow);
   if(IsPressed(UP_BUTTON) || (irValue == KEY_UP))
   {
     Scroll(SCROLL_UP,currentRow,minRow);
@@ -296,8 +173,10 @@ void StateFunction_AlarmMenu(int& state,irRecv_t& irValue)
     switch(currentRow)
     {
       case 0:
+        state = STATE_SETALARM;
         break;
       case 1:
+        state = STATE_DELETEALARM;
         break;
       case 2:
         state = STATE_MAINMENU;
@@ -306,3 +185,55 @@ void StateFunction_AlarmMenu(int& state,irRecv_t& irValue)
     lcd.clear();
   }  
 }
+
+void StateFunc_SetAlarm(int& state,irRecv_t& irValue)
+{
+  const int minRow = 0;
+  const int maxRow = 3;
+  static int currentRow;  
+
+  DisplayAlarmSetting(currentRow);
+  if(IsPressed(UP_BUTTON) || (irValue == KEY_UP))
+  {
+    Scroll(SCROLL_UP,currentRow,minRow);
+  }
+  if(IsPressed(DOWN_BUTTON) || (irValue == KEY_DOWN))
+  {
+    Scroll(SCROLL_DOWN,currentRow,maxRow); 
+  }
+  if(IsPressed(SEL_BUTTON) || (irValue == KEY_OK))
+  {
+    switch(currentRow)
+    {
+      case 0:
+        //Set alarm slot
+        break;
+      case 1:
+        //Set alarm hour
+        break;
+      case 2:
+        //Set alarm minute
+        break;
+      case 3:
+        state = STATE_ALARMMENU;
+        break;
+    }
+    lcd.clear(); 
+  }      
+}
+
+void StateFunc_DeleteAlarm(int& state,irRecv_t& irValue)
+{
+  
+}
+
+void StateFunc_GameMenu(int& state)
+{
+  
+}
+
+void StateFunc_SongMenu(int& state)
+{
+  
+}
+

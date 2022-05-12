@@ -45,17 +45,25 @@ void loop(void)
   switch(state)
   {
     case STATE_MAINMENU:
-      StateFunction_MainMenu(state,irValue,hour,minute);
+      StateFunc_MainMenu(state,irValue,hour,minute);
       break;
     case STATE_TIMEMENU:
-      StateFunction_TimeMenu(state,irValue,hour,minute);
+      StateFunc_TimeMenu(state,irValue,hour,minute);
       break;
     case STATE_ALARMMENU:
-      StateFunction_AlarmMenu(state,irValue);
+      StateFunc_AlarmMenu(state,irValue);
+      break;
+    case STATE_SETALARM:
+      StateFunc_SetAlarm(state,irValue);
+      break;
+    case STATE_DELETEALARM:
+      StateFunc_DeleteAlarm(state,irValue);
       break;
     case STATE_GAMEMENU:
+      StateFunc_GameMenu(state);
       break;
     case STATE_SONGMENU:
+      StateFunc_SongMenu(state);
       break;
   }
 }

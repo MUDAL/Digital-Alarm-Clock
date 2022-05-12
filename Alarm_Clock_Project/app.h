@@ -2,11 +2,9 @@
 #define APP_H
 
 #include <IRremote.h>
-#include <LiquidCrystal.h>
-#include <Wire.h>
-#include "RTClib.h" //Version 1.3.3
 #include "button.h"
 #include "i2c_eeprom.h"
+#include "display.h"
 
 //Enums
 typedef enum
@@ -33,12 +31,6 @@ typedef enum
 
 typedef enum
 {
-  SCROLL_UP = 0,
-  SCROLL_DOWN
-}scroll_t;
-
-typedef enum
-{
   HOUR = 0,
   MINUTE
 }time_t;
@@ -48,21 +40,23 @@ enum States
   STATE_MAINMENU = 0,
   STATE_TIMEMENU,
   STATE_ALARMMENU,
+  STATE_SETALARM,
+  STATE_DELETEALARM,
   STATE_GAMEMENU,
   STATE_SONGMENU
 };
 
-//Variables
-extern LiquidCrystal lcd;
-extern RTC_DS3231 rtc;
 extern IRrecv irReceiver;
-
 extern irRecv_t GetIRRemoteVal(void);
 //State functions
-extern void StateFunction_MainMenu(int& state,irRecv_t& irValue,
+extern void StateFunc_MainMenu(int& state,irRecv_t& irValue,
                                    int& hour,int& minute);
-extern void StateFunction_TimeMenu(int& state,irRecv_t& irValue,
+extern void StateFunc_TimeMenu(int& state,irRecv_t& irValue,
                                    int& hour,int& minute);
-extern void StateFunction_AlarmMenu(int& state,irRecv_t& irValue);
+extern void StateFunc_AlarmMenu(int& state,irRecv_t& irValue);
+extern void StateFunc_SetAlarm(int& state,irRecv_t& irValue);
+extern void StateFunc_DeleteAlarm(int& state,irRecv_t& irValue);
+extern void StateFunc_GameMenu(int& state);
+extern void StateFunc_SongMenu(int& state);
 
 #endif
