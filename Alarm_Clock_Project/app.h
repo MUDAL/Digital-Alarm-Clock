@@ -6,6 +6,7 @@
 #include <Wire.h>
 #include "RTClib.h" //Version 1.3.3
 #include "button.h"
+#include "i2c_eeprom.h"
 
 //Enums
 typedef enum

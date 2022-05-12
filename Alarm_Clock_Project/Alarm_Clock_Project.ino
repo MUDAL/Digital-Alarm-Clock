@@ -28,6 +28,11 @@ void setup(void)
   irReceiver.enableIRIn();
   rtc.begin();
   lcd.begin(20,4);
+  //EEPROM Test [Thanks to DroneBot Workshop and https://github.com/cyberp/AT24Cx/tree/master/AT24CX_search_IC]
+  //WriteEEPROM(0,55);
+  //byte rcvData = ReadEEPROM(0);
+  //Serial.print("data = ");
+  //Serial.println(rcvData,DEC);
 }
 
 void loop(void) 
