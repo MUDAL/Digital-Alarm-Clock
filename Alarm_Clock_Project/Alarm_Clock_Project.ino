@@ -33,15 +33,15 @@ RTC_DS3231 rtc;
 //ISR (asynchronous halt) [Stop music, stop alarm]
 void ISR_Halt(void)
 {
-  //false trigger due to power cycle
-  static bool isFalseTrigger = true;
-  switch(isFalseTrigger)
+  //false trigger occurs due to power cycle
+  static bool isCorrectTrigger;
+  switch(isCorrectTrigger)
   {
     case false:
-      StopMusic(true);
+      isCorrectTrigger = true;
       break;
     case true:
-      isFalseTrigger = false;
+      StopMusic(true);
       break;
   }
 }
@@ -64,10 +64,10 @@ void setup(void)
 
 void loop(void) 
 {
-  if(!MusicStopped())
+  /*if(!MusicStopped())
   {
-    PlaySong_TakeOnMe();
-  }
+    PlaySong_Birthday();
+  }*/
   static int state = STATE_MAINMENU;
   static int hour;
   static int minute;
