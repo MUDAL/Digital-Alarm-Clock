@@ -67,6 +67,22 @@ static void SetTime(time_t t,int& time)
   }
 }
 
+static void LoopSong(int row,void(*PlaySong)())
+{
+  lcd.setCursor(1,row);
+  lcd.print('>');
+  StopMusic(false); //Enable music play 
+  while(1)
+  {
+    PlaySong();
+    if(MusicStopped())
+    {
+      //Music stopped by reset button 
+      break;
+    }
+  }
+}
+
 //Extern functions
 irRecv_t GetIRRemoteVal(void)
 {
@@ -227,13 +243,69 @@ void StateFunc_DeleteAlarm(int& state,irRecv_t& irValue)
   
 }
 
-void StateFunc_GameMenu(int& state)
+void StateFunc_GameMenu(int& state,irRecv_t& irValue)
 {
-  
+  const int minRow = 0;
+  const int maxRow = 1;
+  static int currentRow;
+
+  DisplayGameMenu(currentRow);
+  if(IsPressed(UP_BUTTON) || (irValue == KEY_UP))
+  {
+    Scroll(SCROLL_UP,currentRow,minRow);
+  }
+  if(IsPressed(DOWN_BUTTON) || (irValue == KEY_DOWN))
+  {
+    Scroll(SCROLL_DOWN,currentRow,maxRow); 
+  }
+  if(IsPressed(SEL_BUTTON) || (irValue == KEY_OK))
+  {
+    switch(currentRow)
+    {
+      case 0:
+        //Play Game
+        break;
+      case 1:
+        state = STATE_MAINMENU;
+        break;
+    }
+    lcd.clear(); 
+  }    
 }
 
-void StateFunc_SongMenu(int& state)
+void StateFunc_SongMenu(int& state,irRecv_t& irValue)
 {
-  
+  const int minRow = 0;
+  const int maxRow = 3;
+  static int currentRow;
+
+  DisplaySongMenu(currentRow);
+  if(IsPressed(UP_BUTTON) || (irValue == KEY_UP))
+  {
+    Scroll(SCROLL_UP,currentRow,minRow);
+  }
+  if(IsPressed(DOWN_BUTTON) || (irValue == KEY_DOWN))
+  {
+    Scroll(SCROLL_DOWN,currentRow,maxRow); 
+  }
+  if(IsPressed(SEL_BUTTON) || (irValue == KEY_OK))
+  {
+    switch(currentRow)
+    {
+      case 0:
+        LoopSong(0,PlaySong_TakeOnMe);
+        break;
+      case 1:
+        LoopSong(1,PlaySong_Birthday);
+        break;
+      case 2:
+        LoopSong(2,PlaySong_Starwars);
+        break;
+      case 3:
+        state = STATE_MAINMENU;
+        break;
+    }
+    lcd.clear(); 
+  }         
 }
 

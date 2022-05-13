@@ -71,7 +71,7 @@ void DisplayMainMenu(int currentRow)
   char time[] = "  Time: ";
   char alarm[] = "  Alarm";
   char game[] = "  Game";
-  char song[] = "  Song";
+  char song[] = "  Songs";
   char* rowHeading[] = {time,alarm,game,song};
   HighlightRow(currentRow,4,rowHeading);
   DisplayRowHeadings(rowHeading,4);
@@ -89,7 +89,7 @@ void DisplayMainMenu(int currentRow)
   lcd.createChar(0,smiley);
   lcd.setCursor(15,0);
   lcd.print("DAMI");
-  lcd.write(byte(0));
+  lcd.write(byte(0)); //display smiley face
   lcd.setCursor(15,1);
   lcd.print("****");
   lcd.setCursor(15,2);
@@ -130,6 +130,26 @@ void DisplayAlarmSetting(int currentRow)
   char minute[] = "  Minute: ";
   char back[] = "  Back"; 
   char* rowHeading[] = {alarmSlot,hour,minute,back}; 
+  HighlightRow(currentRow,4,rowHeading);
+  DisplayRowHeadings(rowHeading,4);
+}
+
+void DisplayGameMenu(int currentRow)
+{
+  char gameName[] = "  Tic-Tac-Toe";
+  char back[] = "  Back";
+  char* rowHeading[] = {gameName,back}; 
+  HighlightRow(currentRow,2,rowHeading);
+  DisplayRowHeadings(rowHeading,2);
+}
+
+void DisplaySongMenu(int currentRow)
+{
+  char song1[] = "  Take on me by a-ha";
+  char song2[] = "  Happy birthday";
+  char song3[] = "  Star wars";
+  char back[] = "  Back";
+  char* rowHeading[] = {song1,song2,song3,back};
   HighlightRow(currentRow,4,rowHeading);
   DisplayRowHeadings(rowHeading,4);
 }

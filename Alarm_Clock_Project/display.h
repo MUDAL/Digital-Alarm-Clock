@@ -21,4 +21,7 @@ extern void DisplayTimeMenu(int currentRow,int t_hour,int t_minute);
 extern void DisplayAlarmMenu(int currentRow);
 extern void DisplayAlarmSetting(int currentRow);
 
+extern void DisplayGameMenu(int currentRow);
+extern void DisplaySongMenu(int currentRow);
+
 #endif

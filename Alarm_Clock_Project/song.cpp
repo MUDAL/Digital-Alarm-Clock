@@ -117,3 +117,34 @@ void PlaySong_Birthday(void)
   } 
 }
 
+void PlaySong_Starwars(void)
+{
+  const int melody[] = 
+  {
+    NOTE_G3, NOTE_G3, NOTE_G3, NOTE_D4, NOTE_G4, NOTE_E4, NOTE_D4, 
+    NOTE_C4, NOTE_C5, NOTE_G4, NOTE_E4, NOTE_D4, NOTE_C4, NOTE_C5, 
+    NOTE_G4, NOTE_F4, NOTE_E4, NOTE_F4, NOTE_D4
+  };  
+  const int durations[] = 
+  {
+    6, 6, 6, 1, 1, 6, 6, 6, 1, 2, 6, 6, 6, 1, 2, 6, 6, 6, 1
+  };
+  //iterate over the notes of the melody
+  for (int thisNote = 0 ; thisNote < 19; thisNote++) 
+  {
+    //to calculate the note duration, take one second. Divided by the note type
+    int duration = 1000 / durations[thisNote];
+    tone(BUZZER_PIN, melody[thisNote], duration);
+    //to distinguish the notes, set a minimum time between them
+    //the note's duration +30% seems to work well
+    int pauseBetweenNotes = duration * 1.30;
+    if(NonBlockingDelay(pauseBetweenNotes) == INTERRUPTED)
+    {
+      noTone(BUZZER_PIN);
+      break;
+    }
+    //stop the tone playing
+    noTone(BUZZER_PIN);
+  } 
+}
+

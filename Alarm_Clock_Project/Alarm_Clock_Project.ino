@@ -14,6 +14,8 @@
  * Credits (for buzzer music):
  * 1.https://www.youtube.com/watch?v=d-WkHkuYSPQ
  * 2.https://create.arduino.cc/projecthub/GeneralSpud/passive-buzzer-song-take-on-me-by-a-ha-0f04a8
+ * 3.https://forum.arduino.cc/t/halloween-and-star-wars-on-two-push-botton-and-buzzer/630316
+ * 4.https://docs.arduino.cc/built-in-examples/digital/toneMelody
  * 
  * Additional info:
  * In order to prevent conflict between the tone and IRremote libraries, 
@@ -64,10 +66,6 @@ void setup(void)
 
 void loop(void) 
 {
-  /*if(!MusicStopped())
-  {
-    PlaySong_Birthday();
-  }*/
   static int state = STATE_MAINMENU;
   static int hour;
   static int minute;
@@ -91,10 +89,10 @@ void loop(void)
       StateFunc_DeleteAlarm(state,irValue);
       break;
     case STATE_GAMEMENU:
-      StateFunc_GameMenu(state);
+      StateFunc_GameMenu(state,irValue);
       break;
     case STATE_SONGMENU:
-      StateFunc_SongMenu(state);
+      StateFunc_SongMenu(state,irValue);
       break;
   }
 }

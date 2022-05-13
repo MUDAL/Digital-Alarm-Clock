@@ -57,7 +57,7 @@ extern void StateFunc_TimeMenu(int& state,irRecv_t& irValue,
 extern void StateFunc_AlarmMenu(int& state,irRecv_t& irValue);
 extern void StateFunc_SetAlarm(int& state,irRecv_t& irValue);
 extern void StateFunc_DeleteAlarm(int& state,irRecv_t& irValue);
-extern void StateFunc_GameMenu(int& state);
-extern void StateFunc_SongMenu(int& state);
+extern void StateFunc_GameMenu(int& state,irRecv_t& irValue);
+extern void StateFunc_SongMenu(int& state,irRecv_t& irValue);
 
 #endif
