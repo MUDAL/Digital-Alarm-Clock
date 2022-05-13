@@ -33,12 +33,16 @@ RTC_DS3231 rtc;
 //ISR (asynchronous halt) [Stop music, stop alarm]
 void Halt(void)
 {
-  static bool powerCycleTrigger = true;
-  if(!powerCycleTrigger)
+  //Proper trigger due to button press and not due to a reset
+  static bool properTrigger;
+  if(!properTrigger)
+  {
+    properTrigger = true;
+  }
+  else
   {
     StopMusic(true);
   }
-  powerCycleTrigger = false;
 }
 
 void setup(void) 
