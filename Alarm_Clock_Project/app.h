@@ -5,6 +5,7 @@
 #include "button.h"
 #include "i2c_eeprom.h"
 #include "display.h"
+#include "song.h"
 
 //Enums
 typedef enum

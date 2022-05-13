@@ -3,7 +3,7 @@
 //HMI button pins
 #define UP_PIN      A2
 #define SELECT_PIN  A3
-#define DOWN_PIN    2
+#define DOWN_PIN    A1
 
 static bool IsDebounced(int buttonPin)
 {
@@ -25,7 +25,7 @@ void InitHMIButtons(void)
   pinMode(DOWN_PIN,INPUT_PULLUP);  
 }
 
-bool IsPressed(int button)
+bool IsPressed(hmiButton_t button)
 {
   //Previous state of the 3 control buttons [up,sel,down] 
   static bool prevState[3] = {0};
@@ -43,7 +43,7 @@ bool IsPressed(int button)
   return false;
 }
 
-bool LongPress(int button)
+bool LongPress(hmiButton_t button)
 {
   const int buttonPin[3] = {UP_PIN,SELECT_PIN,DOWN_PIN}; 
   if(!digitalRead(buttonPin[button]))

@@ -58,6 +58,16 @@ void DisplayAlignedTime(int t,char separator)
 
 void DisplayMainMenu(int currentRow)
 {
+  byte smiley[8] = 
+  {
+    B00000,
+    B10001,
+    B00000,
+    B00000,
+    B10001,
+    B01110,
+    B00000,
+  };
   char time[] = "  Time: ";
   char alarm[] = "  Alarm";
   char game[] = "  Game";
@@ -76,9 +86,15 @@ void DisplayMainMenu(int currentRow)
     lcd.setCursor(14,i);
     lcd.print('|');
   }
+  lcd.createChar(0,smiley);
+  lcd.setCursor(15,0);
+  lcd.print("DAMI");
+  lcd.write(byte(0));
   lcd.setCursor(15,1);
-  lcd.print("MAIN");
+  lcd.print("****");
   lcd.setCursor(15,2);
+  lcd.print("MAIN");
+  lcd.setCursor(15,3);
   lcd.print("MENU");
 }
 

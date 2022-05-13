@@ -3,32 +3,54 @@
  * Pinouts:
  * RTC (SDA: A4, SCL: A5)
  * IR receiver (A0)
- * Reset button (A1)
+ * Reset button (2)
  * Button1 (A2)
  * Button2 (A3)
- * Button3 (2)
+ * Button3 (A1)
  * LCD (3,4,5,6,7,8)
  * Buzzer (11)
- * RTC SQW pin (9)
+ * RTC SQW pin (10)
+ * 
+ * Credits (for buzzer music):
+ * 1.https://www.youtube.com/watch?v=d-WkHkuYSPQ
+ * 2.https://create.arduino.cc/projecthub/GeneralSpud/passive-buzzer-song-take-on-me-by-a-ha-0f04a8
+ * 
+ * Additional info:
+ * In order to prevent conflict between the tone and IRremote libraries, 
+ * the IRremote library (boarddefs.h) was modified to use TIMER1 instead of TIMER2.
+ * (TIMER2 is already used by the tone library)
+ * 
 */
 #include "app.h"
 
 #define IR_RECEIVER   A0
-#define RESET_BUTTON  A1
+#define RESET_BUTTON  2
 
 LiquidCrystal lcd(3,4,5,6,7,8);
 IRrecv irReceiver(IR_RECEIVER);
 RTC_DS3231 rtc;
 
+//ISR (asynchronous halt) [Stop music, stop alarm]
+void Halt(void)
+{
+  static bool powerCycleTrigger = true;
+  if(!powerCycleTrigger)
+  {
+    StopMusic(true);
+  }
+  powerCycleTrigger = false;
+}
+
 void setup(void) 
 {
   Serial.begin(9600);
   pinMode(RESET_BUTTON,INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(RESET_BUTTON),Halt,FALLING);
   InitHMIButtons();
   irReceiver.enableIRIn();
   rtc.begin();
   lcd.begin(20,4);
-  //EEPROM Test [Thanks to DroneBot Workshop and https://github.com/cyberp/AT24Cx/tree/master/AT24CX_search_IC]
+  //EEPROM Test
   //WriteEEPROM(0,55);
   //byte rcvData = ReadEEPROM(0);
   //Serial.print("data = ");
