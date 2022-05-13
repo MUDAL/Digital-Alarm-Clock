@@ -7,9 +7,9 @@
  * Button1 (A2)
  * Button2 (A3)
  * Button3 (A1)
- * LCD (3,4,5,6,7,8)
+ * LCD (10,4,5,6,7,8)
  * Buzzer (11)
- * RTC SQW pin (10)
+ * RTC SQW pin (3)
  * 
  * Credits (for buzzer music):
  * 1.https://www.youtube.com/watch?v=d-WkHkuYSPQ
@@ -26,22 +26,23 @@
 #define IR_RECEIVER   A0
 #define RESET_BUTTON  2
 
-LiquidCrystal lcd(3,4,5,6,7,8);
+LiquidCrystal lcd(10,4,5,6,7,8);
 IRrecv irReceiver(IR_RECEIVER);
 RTC_DS3231 rtc;
 
 //ISR (asynchronous halt) [Stop music, stop alarm]
-void Halt(void)
+void ISR_Halt(void)
 {
-  //Proper trigger due to button press and not due to a reset
-  static bool properTrigger;
-  if(!properTrigger)
+  //false trigger due to power cycle
+  static bool isFalseTrigger = true;
+  switch(isFalseTrigger)
   {
-    properTrigger = true;
-  }
-  else
-  {
-    StopMusic(true);
+    case false:
+      StopMusic(true);
+      break;
+    case true:
+      isFalseTrigger = false;
+      break;
   }
 }
 
@@ -49,7 +50,7 @@ void setup(void)
 {
   Serial.begin(9600);
   pinMode(RESET_BUTTON,INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(RESET_BUTTON),Halt,FALLING);
+  attachInterrupt(digitalPinToInterrupt(RESET_BUTTON),ISR_Halt,FALLING);
   InitHMIButtons();
   irReceiver.enableIRIn();
   rtc.begin();
@@ -63,6 +64,10 @@ void setup(void)
 
 void loop(void) 
 {
+  if(!MusicStopped())
+  {
+    PlaySong_TakeOnMe();
+  }
   static int state = STATE_MAINMENU;
   static int hour;
   static int minute;
