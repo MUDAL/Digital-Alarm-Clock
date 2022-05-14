@@ -1,4 +1,7 @@
 #include <Arduino.h>
+#include <LiquidCrystal.h>
+#include <Wire.h>
+#include "RTClib.h" //Version 1.3.3
 #include "display.h"
 
 static void HighlightRow(int currentRow,int numOfRows,char** rowHeading)
@@ -13,7 +16,7 @@ static void HighlightRow(int currentRow,int numOfRows,char** rowHeading)
   }
 }
 
-static void DisplayRowHeadings(char** rowHeading,int numOfRows)
+static void DisplayRowHeadings(LiquidCrystal& lcd,char** rowHeading,int numOfRows)
 {
   for(int i = 0; i < numOfRows; i++)
   {
@@ -38,7 +41,7 @@ void Scroll(scroll_t dir,int& param,int limit)
   }  
 }
 
-void DisplayAlignedTime(int t,char separator)
+void DisplayAlignedTime(LiquidCrystal& lcd,int t,char separator)
 {
   //t = unaligned time
   if(t < 10)
@@ -56,9 +59,9 @@ void DisplayAlignedTime(int t,char separator)
   }  
 }
 
-void DisplayMainMenu(int currentRow)
+void DisplayMainMenu(LiquidCrystal& lcd,int currentRow,RTC_DS3231& rtc)
 {
-  byte smiley[8] = 
+  static byte smiley[8] = 
   {
     B00000,
     B10001,
@@ -74,12 +77,12 @@ void DisplayMainMenu(int currentRow)
   char song[] = "  Songs";
   char* rowHeading[] = {time,alarm,game,song};
   HighlightRow(currentRow,4,rowHeading);
-  DisplayRowHeadings(rowHeading,4);
+  DisplayRowHeadings(lcd,rowHeading,4);
   //Display time
   lcd.setCursor(8,0);
   DateTime currentTime = rtc.now();
-  DisplayAlignedTime(currentTime.hour(),':');
-  DisplayAlignedTime(currentTime.minute());
+  DisplayAlignedTime(lcd,currentTime.hour(),':');
+  DisplayAlignedTime(lcd,currentTime.minute());
   //Display logo for main menu
   for(int i = 0; i < 4; i++)
   {
@@ -98,14 +101,14 @@ void DisplayMainMenu(int currentRow)
   lcd.print("MENU");
 }
 
-void DisplayTimeMenu(int currentRow,int t_hour,int t_minute)
+void DisplayTimeMenu(LiquidCrystal& lcd,int currentRow,int t_hour,int t_minute)
 {
   char hour[] = "  Hour: ";
   char minute[] = "  Minute: ";
   char back[] = "  Back ";
   char* rowHeading[] = {hour,minute,back};
   HighlightRow(currentRow,3,rowHeading);
-  DisplayRowHeadings(rowHeading,3);
+  DisplayRowHeadings(lcd,rowHeading,3);
   //Display hour and minute
   lcd.setCursor(8,0);
   lcd.print(t_hour);
@@ -113,17 +116,17 @@ void DisplayTimeMenu(int currentRow,int t_hour,int t_minute)
   lcd.print(t_minute);
 }
 
-void DisplayAlarmMenu(int currentRow)
+void DisplayAlarmMenu(LiquidCrystal& lcd,int currentRow)
 {
   char setAlarm[] = "  Set alarm ";
   char delAlarm[] = "  Delete alarm";
   char back[] = "  Back";
   char* rowHeading[] = {setAlarm,delAlarm,back};
   HighlightRow(currentRow,3,rowHeading);
-  DisplayRowHeadings(rowHeading,3);
+  DisplayRowHeadings(lcd,rowHeading,3);
 }
 
-void DisplayAlarmSetting(int currentRow)
+void DisplayAlarmSetting(LiquidCrystal& lcd,int currentRow)
 {
   char alarmSlot[] = "  Alarm slot: ";
   char hour[] = "  Hour: ";
@@ -131,19 +134,56 @@ void DisplayAlarmSetting(int currentRow)
   char back[] = "  Back"; 
   char* rowHeading[] = {alarmSlot,hour,minute,back}; 
   HighlightRow(currentRow,4,rowHeading);
-  DisplayRowHeadings(rowHeading,4);
+  DisplayRowHeadings(lcd,rowHeading,4);
 }
 
-void DisplayGameMenu(int currentRow)
+void DisplayGameMenu(LiquidCrystal& lcd,int currentRow)
 {
   char gameName[] = "  Tic-Tac-Toe";
   char back[] = "  Back";
   char* rowHeading[] = {gameName,back}; 
   HighlightRow(currentRow,2,rowHeading);
-  DisplayRowHeadings(rowHeading,2);
+  DisplayRowHeadings(lcd,rowHeading,2);
+  //Display Game Hint
+  lcd.setCursor(0,2);
+  lcd.print("[Use the remote");
+  lcd.setCursor(0,3);
+  lcd.print("to play the game]");
 }
 
-void DisplaySongMenu(int currentRow)
+void DisplayPlayGame(LiquidCrystal& lcd,int currentRow)
+{
+  char play[] = "  Play";
+  char howToPlay[] = "  How to play";
+  char back[] = "  Back";
+  char* rowHeading[] = {play,howToPlay,back};
+  HighlightRow(currentRow,3,rowHeading);
+  DisplayRowHeadings(lcd,rowHeading,3);
+}
+
+void DisplayHowToPlay(LiquidCrystal& lcd)
+{
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("1. Player 1 = X");
+  lcd.setCursor(0,1);
+  lcd.print("Player 2 = O");
+  lcd.setCursor(0,2);
+  lcd.print("Take turns to play");
+  delay(3000);
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("2. Use keys 1-9");
+  lcd.setCursor(0,1);
+  lcd.print("on the remote to");
+  lcd.setCursor(0,2);
+  lcd.print("place X or O");
+  lcd.setCursor(0,3);
+  lcd.print("on the game board");
+  delay(3000);
+}
+
+void DisplaySongMenu(LiquidCrystal& lcd,int currentRow)
 {
   char song1[] = "  Take on me by a-ha";
   char song2[] = "  Happy birthday";
@@ -151,6 +191,6 @@ void DisplaySongMenu(int currentRow)
   char back[] = "  Back";
   char* rowHeading[] = {song1,song2,song3,back};
   HighlightRow(currentRow,4,rowHeading);
-  DisplayRowHeadings(rowHeading,4);
+  DisplayRowHeadings(lcd,rowHeading,4);
 }
 

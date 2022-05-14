@@ -69,30 +69,33 @@ void loop(void)
   static int state = STATE_MAINMENU;
   static int hour;
   static int minute;
-  irRecv_t irValue = GetIRRemoteVal();
+  irRecv_t irValue = GetIRRemoteVal(irReceiver);
 
   switch(state)
   {
     case STATE_MAINMENU:
-      StateFunc_MainMenu(state,irValue,hour,minute);
+      StateFunc_MainMenu(state,irValue,lcd,rtc,hour,minute);
       break;
     case STATE_TIMEMENU:
-      StateFunc_TimeMenu(state,irValue,hour,minute);
+      StateFunc_TimeMenu(state,irValue,lcd,rtc,irReceiver,hour,minute);
       break;
     case STATE_ALARMMENU:
-      StateFunc_AlarmMenu(state,irValue);
+      StateFunc_AlarmMenu(state,irValue,lcd);
       break;
     case STATE_SETALARM:
-      StateFunc_SetAlarm(state,irValue);
+      StateFunc_SetAlarm(state,irValue,lcd);
       break;
     case STATE_DELETEALARM:
-      StateFunc_DeleteAlarm(state,irValue);
+      StateFunc_DeleteAlarm(state,irValue,lcd);
       break;
     case STATE_GAMEMENU:
-      StateFunc_GameMenu(state,irValue);
+      StateFunc_GameMenu(state,irValue,lcd);
+      break;
+    case STATE_PLAYGAME:
+      StateFunc_PlayGame(state,irValue,lcd,irReceiver);
       break;
     case STATE_SONGMENU:
-      StateFunc_SongMenu(state,irValue);
+      StateFunc_SongMenu(state,irValue,lcd);
       break;
   }
 }

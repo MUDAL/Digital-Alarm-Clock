@@ -1,13 +1,13 @@
 #include "app.h"
 
-static void SetTime(time_t t,int& time)
+static void SetTime(time_t t,int& time,LiquidCrystal& lcd,RTC_DS3231& rtc,IRrecv& irReceiver)
 {
   int row;
   int col; //for hour/minute's value on LCD screen
   while(1)
   {
     DateTime dateTime = rtc.now();
-    irRecv_t irValue = GetIRRemoteVal();
+    irRecv_t irValue = GetIRRemoteVal(irReceiver);
     switch(t)
     {
       case HOUR:
@@ -24,7 +24,7 @@ static void SetTime(time_t t,int& time)
     lcd.setCursor(1,row);
     lcd.print('>');
     lcd.setCursor(col,row);
-    DisplayAlignedTime(time);
+    DisplayAlignedTime(lcd,time);
     if(LongPress(UP_BUTTON) || (irValue == KEY_UP))
     {
       delay(200);
@@ -67,10 +67,8 @@ static void SetTime(time_t t,int& time)
   }
 }
 
-static void LoopSong(int row,void(*PlaySong)())
+static void LoopSong(void(*PlaySong)())
 {
-  lcd.setCursor(1,row);
-  lcd.print('>');
   StopMusic(false); //Enable music play 
   while(1)
   {
@@ -84,19 +82,8 @@ static void LoopSong(int row,void(*PlaySong)())
 }
 
 //Extern functions
-irRecv_t GetIRRemoteVal(void)
-{
-  decode_results irResult;
-  irRecv_t irValue = NO_KEY;
-  if(irReceiver.decode(&irResult))
-  {
-    irValue = irResult.value;
-    irReceiver.resume();
-  }
-  return irValue;
-}
-
-void StateFunc_MainMenu(int& state,irRecv_t& irValue,int& hour,int& minute)
+void StateFunc_MainMenu(int& state,irRecv_t& irValue,LiquidCrystal& lcd,
+                        RTC_DS3231& rtc,int& hour,int& minute)
 {
   const int minRow = 0;
   const int maxRow = 3;
@@ -106,7 +93,7 @@ void StateFunc_MainMenu(int& state,irRecv_t& irValue,int& hour,int& minute)
   hour = dateTime.hour();
   minute = dateTime.minute();
   
-  DisplayMainMenu(currentRow);
+  DisplayMainMenu(lcd,currentRow,rtc);
   if(IsPressed(UP_BUTTON) || (irValue == KEY_UP))
   {
     Scroll(SCROLL_UP,currentRow,minRow);
@@ -136,13 +123,15 @@ void StateFunc_MainMenu(int& state,irRecv_t& irValue,int& hour,int& minute)
   }  
 }
 
-void StateFunc_TimeMenu(int& state,irRecv_t& irValue,int& hour,int& minute)
+void StateFunc_TimeMenu(int& state,irRecv_t& irValue,LiquidCrystal& lcd,
+                        RTC_DS3231& rtc,IRrecv& irReceiver,
+                        int& hour,int& minute)
 {
   const int minRow = 0;
   const int maxRow = 2;
   static int currentRow;
   
-  DisplayTimeMenu(currentRow,hour,minute);
+  DisplayTimeMenu(lcd,currentRow,hour,minute);
   if(IsPressed(UP_BUTTON) || (irValue == KEY_UP))
   {
     Scroll(SCROLL_UP,currentRow,minRow);
@@ -156,10 +145,10 @@ void StateFunc_TimeMenu(int& state,irRecv_t& irValue,int& hour,int& minute)
     switch(currentRow)
     {
       case 0:
-        SetTime(HOUR,hour);
+        SetTime(HOUR,hour,lcd,rtc,irReceiver);
         break;
       case 1:
-        SetTime(MINUTE,minute);
+        SetTime(MINUTE,minute,lcd,rtc,irReceiver);
         break;
       case 2:
         state = STATE_MAINMENU;
@@ -169,13 +158,13 @@ void StateFunc_TimeMenu(int& state,irRecv_t& irValue,int& hour,int& minute)
   }  
 }
 
-void StateFunc_AlarmMenu(int& state,irRecv_t& irValue)
+void StateFunc_AlarmMenu(int& state,irRecv_t& irValue,LiquidCrystal& lcd)
 {
   const int minRow = 0;
   const int maxRow = 2;
   static int currentRow;
 
-  DisplayAlarmMenu(currentRow);
+  DisplayAlarmMenu(lcd,currentRow);
   if(IsPressed(UP_BUTTON) || (irValue == KEY_UP))
   {
     Scroll(SCROLL_UP,currentRow,minRow);
@@ -202,13 +191,13 @@ void StateFunc_AlarmMenu(int& state,irRecv_t& irValue)
   }  
 }
 
-void StateFunc_SetAlarm(int& state,irRecv_t& irValue)
+void StateFunc_SetAlarm(int& state,irRecv_t& irValue,LiquidCrystal& lcd)
 {
   const int minRow = 0;
   const int maxRow = 3;
   static int currentRow;  
 
-  DisplayAlarmSetting(currentRow);
+  DisplayAlarmSetting(lcd,currentRow);
   if(IsPressed(UP_BUTTON) || (irValue == KEY_UP))
   {
     Scroll(SCROLL_UP,currentRow,minRow);
@@ -238,18 +227,18 @@ void StateFunc_SetAlarm(int& state,irRecv_t& irValue)
   }      
 }
 
-void StateFunc_DeleteAlarm(int& state,irRecv_t& irValue)
+void StateFunc_DeleteAlarm(int& state,irRecv_t& irValue,LiquidCrystal& lcd)
 {
   
 }
 
-void StateFunc_GameMenu(int& state,irRecv_t& irValue)
+void StateFunc_GameMenu(int& state,irRecv_t& irValue,LiquidCrystal& lcd)
 {
   const int minRow = 0;
   const int maxRow = 1;
   static int currentRow;
 
-  DisplayGameMenu(currentRow);
+  DisplayGameMenu(lcd,currentRow);
   if(IsPressed(UP_BUTTON) || (irValue == KEY_UP))
   {
     Scroll(SCROLL_UP,currentRow,minRow);
@@ -263,7 +252,7 @@ void StateFunc_GameMenu(int& state,irRecv_t& irValue)
     switch(currentRow)
     {
       case 0:
-        //Play Game
+        state = STATE_PLAYGAME;
         break;
       case 1:
         state = STATE_MAINMENU;
@@ -273,13 +262,13 @@ void StateFunc_GameMenu(int& state,irRecv_t& irValue)
   }    
 }
 
-void StateFunc_SongMenu(int& state,irRecv_t& irValue)
+void StateFunc_PlayGame(int& state,irRecv_t& irValue,LiquidCrystal& lcd,IRrecv& irReceiver)
 {
   const int minRow = 0;
-  const int maxRow = 3;
+  const int maxRow = 2;
   static int currentRow;
 
-  DisplaySongMenu(currentRow);
+  DisplayPlayGame(lcd,currentRow);
   if(IsPressed(UP_BUTTON) || (irValue == KEY_UP))
   {
     Scroll(SCROLL_UP,currentRow,minRow);
@@ -293,13 +282,53 @@ void StateFunc_SongMenu(int& state,irRecv_t& irValue)
     switch(currentRow)
     {
       case 0:
-        LoopSong(0,PlaySong_TakeOnMe);
+        PlayGame(lcd,irReceiver);
+        state = STATE_MAINMENU;
         break;
       case 1:
-        LoopSong(1,PlaySong_Birthday);
+        DisplayHowToPlay(lcd);
         break;
       case 2:
-        LoopSong(2,PlaySong_Starwars);
+        state = STATE_GAMEMENU;
+        break;
+    }
+    lcd.clear(); 
+  }        
+}
+
+void StateFunc_SongMenu(int& state,irRecv_t& irValue,LiquidCrystal& lcd)
+{
+  const int minRow = 0;
+  const int maxRow = 3;
+  static int currentRow;
+
+  DisplaySongMenu(lcd,currentRow);
+  if(IsPressed(UP_BUTTON) || (irValue == KEY_UP))
+  {
+    Scroll(SCROLL_UP,currentRow,minRow);
+  }
+  if(IsPressed(DOWN_BUTTON) || (irValue == KEY_DOWN))
+  {
+    Scroll(SCROLL_DOWN,currentRow,maxRow); 
+  }
+  if(IsPressed(SEL_BUTTON) || (irValue == KEY_OK))
+  {
+    switch(currentRow)
+    {
+      case 0:
+        lcd.setCursor(1,0);
+        lcd.print('>');
+        LoopSong(PlaySong_TakeOnMe);
+        break;
+      case 1:
+        lcd.setCursor(1,1);
+        lcd.print('>');
+        LoopSong(PlaySong_Birthday);
+        break;
+      case 2:
+        lcd.setCursor(1,2);
+        lcd.print('>');
+        LoopSong(PlaySong_Starwars);
         break;
       case 3:
         state = STATE_MAINMENU;

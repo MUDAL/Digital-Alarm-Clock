@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <Wire.h>
 #include "i2c_eeprom.h"
 
 #define EEPROM_ADDRESS 0x57 //AT24C32
