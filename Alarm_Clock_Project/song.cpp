@@ -1,37 +1,6 @@
 #include <Arduino.h>
 #include "song.h"
 
-static volatile bool stopMusic;
-
-typedef enum
-{
-  UNINTERRUPTED = 0,
-  INTERRUPTED
-}delayFuncStatus_t;
-
-static delayFuncStatus_t NonBlockingDelay(int delayTime)
-{
-  int start = millis();
-  while((millis() - start) < delayTime)
-  {
-    if(MusicStopped())
-    {
-      return INTERRUPTED;
-    }
-  }
-  return UNINTERRUPTED;
-}
-
-void StopMusic(bool state)
-{
-  stopMusic = state;
-}
-
-bool MusicStopped(void)
-{
-  return stopMusic;
-}
-
 void PlaySong_TakeOnMe(void)
 {
   const int melody[] = 
@@ -58,10 +27,7 @@ void PlaySong_TakeOnMe(void)
     tone(BUZZER_PIN, melody[thisNote], duration);
     // pause between notes
     int pause = duration * 1.3;
-    if(NonBlockingDelay(pause) == INTERRUPTED)
-    {
-      break;
-    }
+    delay(pause);
     // stop the tone
     noTone(BUZZER_PIN);
   }  
@@ -91,24 +57,15 @@ void PlaySong_Birthday(void)
     if (melody[thisNote] != PAUSE) 
     {
       tone(BUZZER_PIN,melody[thisNote]);
-      if(NonBlockingDelay(durations[thisNote] * tempo) == INTERRUPTED)
-      {
-        break;
-      }
+      delay(durations[thisNote] * tempo);
       noTone(BUZZER_PIN);
       //delay after note reproduction following TEMPO variable's diktat
-      if(NonBlockingDelay(tempo) == INTERRUPTED)
-      {
-        break;
-      }
+      delay(tempo);
     } 
     else 
     {
       //delay if this is a pause. (it will be in millis, check NOTE_LEN)
-      if(NonBlockingDelay(durations[thisNote]) == INTERRUPTED)
-      {
-        break;
-      }
+      delay(durations[thisNote]);
     }
   } 
 }
@@ -134,10 +91,7 @@ void PlaySong_Starwars(void)
     //to distinguish the notes, set a minimum time between them
     //the note's duration +30% seems to work well
     int pauseBetweenNotes = duration * 1.30;
-    if(NonBlockingDelay(pauseBetweenNotes) == INTERRUPTED)
-    {
-      break;
-    }
+    delay(pauseBetweenNotes);
     //stop the tone playing
     noTone(BUZZER_PIN);
   } 

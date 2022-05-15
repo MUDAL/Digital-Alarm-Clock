@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <LiquidCrystal.h>
 #include <IRremote.h>
+#include "pitches.h"
 #include "RTClib.h"
 #include "button.h"
 #include "i2c_eeprom.h"
@@ -145,7 +146,7 @@ void SelectAlarmSlot(int& slot,LiquidCrystal& lcd,RTC_DS3231& rtc,IRrecv& irRece
       }
     }
     lcd.setCursor(8,0);
-    lcd.print(1+slot);
+    DisplayAlignedValue(lcd,1+slot);
     //Display alarm hour and minute for current slot by.. 
     //reading the required sub-slots
     int hour = ReadEEPROM(slot*2);
@@ -158,9 +159,8 @@ void SelectAlarmSlot(int& slot,LiquidCrystal& lcd,RTC_DS3231& rtc,IRrecv& irRece
     }
     else
     {
-      lcd.print(hour); //hour
-      lcd.print(':');
-      lcd.print(minute); //minute 
+      DisplayAlignedValue(lcd,hour,':'); //hour
+      DisplayAlignedValue(lcd,minute); //minute 
       lcd.print(']');
     }
     

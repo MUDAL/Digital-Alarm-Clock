@@ -75,10 +75,8 @@ static void SetMinute(int& time,LiquidCrystal& lcd,RTC_DS3231& rtc,IRrecv& irRec
 
 static void LoopSong(void(*PlaySong)())
 {
-  StopMusic(false); //Enable music play 
-  while(!MusicStopped())
-  {
-    //Music hasn't been stopped by reset button
+  while(1)
+  {//loop is broken when reset button is pressed
     PlaySong(); 
   }
 }

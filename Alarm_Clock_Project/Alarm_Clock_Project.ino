@@ -31,28 +31,19 @@ LiquidCrystal lcd(10,4,5,6,7,8);
 IRrecv irReceiver(IR_RECEIVER);
 RTC_DS3231 rtc;
 
-//ISR (asynchronous halt) [Stop music/alarm]
-void ISR_Halt(void)
+//ISRs (asynchronous halt) [Stop music/alarm, reset system]
+void(*ResetFunc)(void) = 0;//Reset function
+void ISR_Reset(void)
 {
-  //false trigger occurs due to power cycle
-  static bool isCorrectTrigger;
-  switch(isCorrectTrigger)
-  {
-    case false:
-      isCorrectTrigger = true;
-      break;
-    case true:
-      StopMusic(true);
-      noTone(BUZZER_PIN);
-      break;
-  }
+  noTone(BUZZER_PIN);
+  ResetFunc();
 }
 
 void setup(void) 
 {
   Serial.begin(9600);
   pinMode(RESET_BUTTON,INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(RESET_BUTTON),ISR_Halt,FALLING);
+  attachInterrupt(digitalPinToInterrupt(RESET_BUTTON),ISR_Reset,FALLING);
   InitHMIButtons();
   irReceiver.enableIRIn();
   rtc.begin();
