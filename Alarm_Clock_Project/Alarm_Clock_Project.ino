@@ -9,7 +9,6 @@
  * Button3 (A1)
  * LCD (10,4,5,6,7,8)
  * Buzzer (11)
- * RTC SQW pin (3)
  * 
  * Credits (for buzzer music):
  * 1.https://www.youtube.com/watch?v=d-WkHkuYSPQ
@@ -32,7 +31,7 @@ LiquidCrystal lcd(10,4,5,6,7,8);
 IRrecv irReceiver(IR_RECEIVER);
 RTC_DS3231 rtc;
 
-//ISR (asynchronous halt) [Stop music, stop alarm]
+//ISR (asynchronous halt) [Stop music/alarm]
 void ISR_Halt(void)
 {
   //false trigger occurs due to power cycle
@@ -44,6 +43,7 @@ void ISR_Halt(void)
       break;
     case true:
       StopMusic(true);
+      noTone(BUZZER_PIN);
       break;
   }
 }
@@ -58,10 +58,20 @@ void setup(void)
   rtc.begin();
   lcd.begin(20,4);
   //EEPROM Test
-  //WriteEEPROM(0,55);
-  //byte rcvData = ReadEEPROM(0);
-  //Serial.print("data = ");
-  //Serial.println(rcvData,DEC);
+  /*byte rcvData[4];
+  for(int i = 0; i < 4; i++)
+  {
+    WriteEEPROM(i,0);
+  }
+  for(int i = 0; i < 4; i++)
+  {
+    rcvData[i] = ReadEEPROM(i);
+    Serial.println(rcvData[i],DEC);
+  }*/
+  /*WriteEEPROM(100,0);
+  byte rcvData = ReadEEPROM(100);
+  Serial.print("data = ");
+  Serial.println(rcvData,DEC);*/
 }
 
 void loop(void) 
@@ -70,7 +80,12 @@ void loop(void)
   static int hour;
   static int minute;
   irRecv_t irValue = GetIRRemoteVal(irReceiver);
-
+  //Checking for alarm
+  for(int alarm = 0; alarm < NUM_OF_ALARMS; alarm++)
+  {
+    AlarmGenerator(rtc,alarm);  
+  }
+  //Executing state machine
   switch(state)
   {
     case STATE_MAINMENU:
@@ -83,7 +98,10 @@ void loop(void)
       StateFunc_AlarmMenu(state,irValue,lcd);
       break;
     case STATE_SETALARM:
-      StateFunc_SetAlarm(state,irValue,lcd);
+      StateFunc_SetAlarm(state,irValue,lcd,irReceiver);
+      break;
+    case STATE_CHECKALARM:
+      StateFunc_CheckAlarm(state,irValue,lcd);
       break;
     case STATE_DELETEALARM:
       StateFunc_DeleteAlarm(state,irValue,lcd);

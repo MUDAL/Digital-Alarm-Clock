@@ -119,22 +119,28 @@ void DisplayTimeMenu(LiquidCrystal& lcd,int currentRow,int t_hour,int t_minute)
 void DisplayAlarmMenu(LiquidCrystal& lcd,int currentRow)
 {
   char setAlarm[] = "  Set alarm ";
+  char checkAlarm[] = "  Check alarm";
   char delAlarm[] = "  Delete alarm";
   char back[] = "  Back";
-  char* rowHeading[] = {setAlarm,delAlarm,back};
-  HighlightRow(currentRow,3,rowHeading);
-  DisplayRowHeadings(lcd,rowHeading,3);
-}
-
-void DisplayAlarmSetting(LiquidCrystal& lcd,int currentRow)
-{
-  char alarmSlot[] = "  Alarm slot: ";
-  char hour[] = "  Hour: ";
-  char minute[] = "  Minute: ";
-  char back[] = "  Back"; 
-  char* rowHeading[] = {alarmSlot,hour,minute,back}; 
+  char* rowHeading[] = {setAlarm,checkAlarm,delAlarm,back};
   HighlightRow(currentRow,4,rowHeading);
   DisplayRowHeadings(lcd,rowHeading,4);
+}
+
+void DisplayAlarmSetting(LiquidCrystal& lcd,int currentRow,int t_hour,int t_minute)
+{
+  char hour[] = "  Hour: ";
+  char minute[] = "  Minute: ";
+  char store[] = "  Store [Max of 20]";
+  char back[] = "  Back"; 
+  char* rowHeading[] = {hour,minute,store,back}; 
+  HighlightRow(currentRow,4,rowHeading);
+  DisplayRowHeadings(lcd,rowHeading,4);
+  //Display hour and minute
+  lcd.setCursor(8,0);
+  lcd.print(t_hour);
+  lcd.setCursor(10,1);
+  lcd.print(t_minute);
 }
 
 void DisplayGameMenu(LiquidCrystal& lcd,int currentRow)

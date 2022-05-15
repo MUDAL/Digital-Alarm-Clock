@@ -60,7 +60,6 @@ void PlaySong_TakeOnMe(void)
     int pause = duration * 1.3;
     if(NonBlockingDelay(pause) == INTERRUPTED)
     {
-      noTone(BUZZER_PIN);
       break;
     }
     // stop the tone
@@ -94,14 +93,12 @@ void PlaySong_Birthday(void)
       tone(BUZZER_PIN,melody[thisNote]);
       if(NonBlockingDelay(durations[thisNote] * tempo) == INTERRUPTED)
       {
-        noTone(BUZZER_PIN);
         break;
       }
       noTone(BUZZER_PIN);
       //delay after note reproduction following TEMPO variable's diktat
       if(NonBlockingDelay(tempo) == INTERRUPTED)
       {
-        noTone(BUZZER_PIN);
         break;
       }
     } 
@@ -110,7 +107,6 @@ void PlaySong_Birthday(void)
       //delay if this is a pause. (it will be in millis, check NOTE_LEN)
       if(NonBlockingDelay(durations[thisNote]) == INTERRUPTED)
       {
-        noTone(BUZZER_PIN);
         break;
       }
     }
@@ -140,7 +136,6 @@ void PlaySong_Starwars(void)
     int pauseBetweenNotes = duration * 1.30;
     if(NonBlockingDelay(pauseBetweenNotes) == INTERRUPTED)
     {
-      noTone(BUZZER_PIN);
       break;
     }
     //stop the tone playing

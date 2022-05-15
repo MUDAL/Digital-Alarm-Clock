@@ -16,13 +16,13 @@ irRecv_t GetIRRemoteVal(IRrecv& irReceiver)
 
 char GetIRKeyPress(irRecv_t& irValue)
 {
-  irRecv_t irArray[] = 
+  static irRecv_t irArray[] = 
   {
     KEY_1,KEY_2,KEY_3,
     KEY_4,KEY_5,KEY_6,
     KEY_7,KEY_8,KEY_9
   };
-  char ch[] = 
+  static char ch[] = 
   {
     '1','2','3',
     '4','5','6',
