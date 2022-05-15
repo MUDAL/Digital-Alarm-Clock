@@ -57,21 +57,6 @@ void setup(void)
   irReceiver.enableIRIn();
   rtc.begin();
   lcd.begin(20,4);
-  //EEPROM Test
-  /*byte rcvData[40];
-  for(int i = 0; i < 40; i++)
-  {
-    WriteEEPROM(i,255);
-  }
-  for(int i = 0; i < 40; i++)
-  {
-    rcvData[i] = ReadEEPROM(i);
-    Serial.println(rcvData[i],DEC);
-  }
-  WriteEEPROM(100,0);
-  byte rcv = ReadEEPROM(100);
-  Serial.print("data = ");
-  Serial.println(rcv,DEC);*/
 }
 
 void loop(void) 
