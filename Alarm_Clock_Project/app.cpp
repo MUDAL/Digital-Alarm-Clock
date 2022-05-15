@@ -3,23 +3,24 @@
 //Setting time
 static void SetHour(int& time,LiquidCrystal& lcd,RTC_DS3231& rtc,IRrecv& irReceiver)
 {
+  lcd.setCursor(1,0);
+  lcd.print('>');  
   while(1)
   {
+    CheckAlarms(rtc); 
     DateTime dateTime = rtc.now();
     irRecv_t irValue = GetIRRemoteVal(irReceiver);
     time %= 24; //24-hour format (00-23)
-    lcd.setCursor(1,0);
-    lcd.print('>');
     lcd.setCursor(8,0);
-    DisplayAlignedTime(lcd,time);
+    DisplayAlignedValue(lcd,time);
     if(LongPress(UP_BUTTON) || (irValue == KEY_UP))
     {
-      delay(200);
+      delay(150);
       time++;
     }
     if(LongPress(DOWN_BUTTON) || (irValue == KEY_DOWN))
     {
-      delay(200);
+      delay(150);
       time--;
       if(time < 0)
       {
@@ -38,23 +39,24 @@ static void SetHour(int& time,LiquidCrystal& lcd,RTC_DS3231& rtc,IRrecv& irRecei
 
 static void SetMinute(int& time,LiquidCrystal& lcd,RTC_DS3231& rtc,IRrecv& irReceiver)
 {
+  lcd.setCursor(1,1);
+  lcd.print('>');  
   while(1)
   {
+    CheckAlarms(rtc);
     DateTime dateTime = rtc.now();
     irRecv_t irValue = GetIRRemoteVal(irReceiver);
     time %= 60; //60-minutes (00-59)
-    lcd.setCursor(1,1);
-    lcd.print('>');
     lcd.setCursor(10,1);
-    DisplayAlignedTime(lcd,time);
+    DisplayAlignedValue(lcd,time);
     if(LongPress(UP_BUTTON) || (irValue == KEY_UP))
     {
-      delay(200);
+      delay(150);
       time++;
     }
     if(LongPress(DOWN_BUTTON) || (irValue == KEY_DOWN))
     {
-      delay(200);
+      delay(150);
       time--;
       if(time < 0)
       {
@@ -161,7 +163,7 @@ void StateFunc_TimeMenu(int& state,irRecv_t& irValue,LiquidCrystal& lcd,
 void StateFunc_AlarmMenu(int& state,irRecv_t& irValue,LiquidCrystal& lcd)
 {
   const int minRow = 0;
-  const int maxRow = 3;
+  const int maxRow = 2;
   static int currentRow;
 
   DisplayAlarmMenu(lcd,currentRow);
@@ -181,12 +183,9 @@ void StateFunc_AlarmMenu(int& state,irRecv_t& irValue,LiquidCrystal& lcd)
         state = STATE_SETALARM;
         break;
       case 1:
-        state = STATE_CHECKALARM;
-        break;
-      case 2:
         state = STATE_DELETEALARM;
         break;
-      case 3:
+      case 2:
         state = STATE_MAINMENU;
         break;
     }
@@ -194,7 +193,8 @@ void StateFunc_AlarmMenu(int& state,irRecv_t& irValue,LiquidCrystal& lcd)
   }  
 }
 
-void StateFunc_SetAlarm(int& state,irRecv_t& irValue,LiquidCrystal& lcd,IRrecv& irReceiver)
+void StateFunc_SetAlarm(int& state,irRecv_t& irValue,LiquidCrystal& lcd,
+                        RTC_DS3231& rtc,IRrecv& irReceiver)
 {
   const int minRow = 0;
   const int maxRow = 3;
@@ -216,10 +216,10 @@ void StateFunc_SetAlarm(int& state,irRecv_t& irValue,LiquidCrystal& lcd,IRrecv& 
     switch(currentRow)
     {
       case 0:
-        SetAlarmHour(hour,lcd,irReceiver);
+        SetAlarmHour(hour,lcd,rtc,irReceiver);
         break;
       case 1:
-        SetAlarmMinute(minute,lcd,irReceiver);
+        SetAlarmMinute(minute,lcd,rtc,irReceiver);
         break;
       case 2:
         StoreAlarm(hour,minute,lcd);
@@ -232,14 +232,42 @@ void StateFunc_SetAlarm(int& state,irRecv_t& irValue,LiquidCrystal& lcd,IRrecv& 
   }      
 }
 
-void StateFunc_CheckAlarm(int& state,irRecv_t& irValue,LiquidCrystal& lcd)
+void StateFunc_DeleteAlarm(int& state,irRecv_t& irValue,LiquidCrystal& lcd,
+                           RTC_DS3231& rtc,IRrecv& irReceiver)
 {
-  
-}
+  const int minRow = 0;
+  const int maxRow = 3;
+  static int currentRow;
+  static int alarmSlot;
 
-void StateFunc_DeleteAlarm(int& state,irRecv_t& irValue,LiquidCrystal& lcd)
-{
-  
+  DisplayAlarmDeletion(alarmSlot,lcd,currentRow);
+  if(IsPressed(UP_BUTTON) || (irValue == KEY_UP))
+  {
+    Scroll(SCROLL_UP,currentRow,minRow);
+  }
+  if(IsPressed(DOWN_BUTTON) || (irValue == KEY_DOWN))
+  {
+    Scroll(SCROLL_DOWN,currentRow,maxRow); 
+  }  
+  if(IsPressed(SEL_BUTTON) || (irValue == KEY_OK))
+  {
+    switch(currentRow)
+    {
+      case 0:
+        SelectAlarmSlot(alarmSlot,lcd,rtc,irReceiver);
+        break;
+      case 1:
+        DeleteAlarmSlot(alarmSlot,lcd,irReceiver);
+        break;
+      case 2:
+        DeleteAllAlarms(lcd);
+        break;
+      case 3:
+        state = STATE_ALARMMENU;
+        break;
+    }
+    lcd.clear(); 
+  }      
 }
 
 void StateFunc_GameMenu(int& state,irRecv_t& irValue,LiquidCrystal& lcd)
@@ -272,7 +300,8 @@ void StateFunc_GameMenu(int& state,irRecv_t& irValue,LiquidCrystal& lcd)
   }    
 }
 
-void StateFunc_PlayGame(int& state,irRecv_t& irValue,LiquidCrystal& lcd,IRrecv& irReceiver)
+void StateFunc_PlayGame(int& state,irRecv_t& irValue,LiquidCrystal& lcd,
+                        RTC_DS3231& rtc,IRrecv& irReceiver)
 {
   const int minRow = 0;
   const int maxRow = 2;
@@ -292,7 +321,7 @@ void StateFunc_PlayGame(int& state,irRecv_t& irValue,LiquidCrystal& lcd,IRrecv& 
     switch(currentRow)
     {
       case 0:
-        PlayGame(lcd,irReceiver);
+        PlayGame(lcd,rtc,irReceiver);
         state = STATE_MAINMENU;
         break;
       case 1:

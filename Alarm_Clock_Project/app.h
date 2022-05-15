@@ -20,7 +20,6 @@ enum States
   STATE_TIMEMENU,
   STATE_ALARMMENU,
   STATE_SETALARM,
-  STATE_CHECKALARM,
   STATE_DELETEALARM,
   STATE_GAMEMENU,
   STATE_PLAYGAME,
@@ -34,11 +33,10 @@ extern void StateFunc_TimeMenu(int& state,irRecv_t& irValue,LiquidCrystal& lcd,
                                RTC_DS3231& rtc,IRrecv& irReceiver,
                                int& hour,int& minute);
 extern void StateFunc_AlarmMenu(int& state,irRecv_t& irValue,LiquidCrystal& lcd);
-extern void StateFunc_SetAlarm(int& state,irRecv_t& irValue,LiquidCrystal& lcd,IRrecv& irReceiver);
-extern void StateFunc_CheckAlarm(int& state,irRecv_t& irValue,LiquidCrystal& lcd);
-extern void StateFunc_DeleteAlarm(int& state,irRecv_t& irValue,LiquidCrystal& lcd);
+extern void StateFunc_SetAlarm(int& state,irRecv_t& irValue,LiquidCrystal& lcd,RTC_DS3231& rtc,IRrecv& irReceiver);
+extern void StateFunc_DeleteAlarm(int& state,irRecv_t& irValue,LiquidCrystal& lcd,RTC_DS3231& rtc,IRrecv& irReceiver);
 extern void StateFunc_GameMenu(int& state,irRecv_t& irValue,LiquidCrystal& lcd);
-extern void StateFunc_PlayGame(int& state,irRecv_t& irValue,LiquidCrystal& lcd,IRrecv& irReceiver);
+extern void StateFunc_PlayGame(int& state,irRecv_t& irValue,LiquidCrystal& lcd,RTC_DS3231& rtc,IRrecv& irReceiver);
 extern void StateFunc_SongMenu(int& state,irRecv_t& irValue,LiquidCrystal& lcd);
 
 #endif

@@ -41,9 +41,9 @@ void Scroll(scroll_t dir,int& param,int limit)
   }  
 }
 
-void DisplayAlignedTime(LiquidCrystal& lcd,int t,char separator)
+void DisplayAlignedValue(LiquidCrystal& lcd,int t,char separator)
 {
-  //t = unaligned time
+  //t = unaligned value
   if(t < 10)
   {
     lcd.print('0');
@@ -81,8 +81,8 @@ void DisplayMainMenu(LiquidCrystal& lcd,int currentRow,RTC_DS3231& rtc)
   //Display time
   lcd.setCursor(8,0);
   DateTime currentTime = rtc.now();
-  DisplayAlignedTime(lcd,currentTime.hour(),':');
-  DisplayAlignedTime(lcd,currentTime.minute());
+  DisplayAlignedValue(lcd,currentTime.hour(),':');
+  DisplayAlignedValue(lcd,currentTime.minute());
   //Display logo for main menu
   for(int i = 0; i < 4; i++)
   {
@@ -119,12 +119,11 @@ void DisplayTimeMenu(LiquidCrystal& lcd,int currentRow,int t_hour,int t_minute)
 void DisplayAlarmMenu(LiquidCrystal& lcd,int currentRow)
 {
   char setAlarm[] = "  Set alarm ";
-  char checkAlarm[] = "  Check alarm";
   char delAlarm[] = "  Delete alarm";
   char back[] = "  Back";
-  char* rowHeading[] = {setAlarm,checkAlarm,delAlarm,back};
-  HighlightRow(currentRow,4,rowHeading);
-  DisplayRowHeadings(lcd,rowHeading,4);
+  char* rowHeading[] = {setAlarm,delAlarm,back};
+  HighlightRow(currentRow,3,rowHeading);
+  DisplayRowHeadings(lcd,rowHeading,3);
 }
 
 void DisplayAlarmSetting(LiquidCrystal& lcd,int currentRow,int t_hour,int t_minute)
@@ -141,6 +140,20 @@ void DisplayAlarmSetting(LiquidCrystal& lcd,int currentRow,int t_hour,int t_minu
   lcd.print(t_hour);
   lcd.setCursor(10,1);
   lcd.print(t_minute);
+}
+
+void DisplayAlarmDeletion(int& alarmSlot,LiquidCrystal& lcd,int currentRow)
+{
+  char slot[] = "  Slot: ";
+  char deleteSlot[] = "  Delete slot";
+  char deleteAll[] = "  Delete all";
+  char back[] = "  Back";
+  char* rowHeading[] = {slot,deleteSlot,deleteAll,back};
+  HighlightRow(currentRow,4,rowHeading);
+  DisplayRowHeadings(lcd,rowHeading,4);
+  //Display current slot
+  lcd.setCursor(8,0);
+  lcd.print(alarmSlot+1);
 }
 
 void DisplayGameMenu(LiquidCrystal& lcd,int currentRow)

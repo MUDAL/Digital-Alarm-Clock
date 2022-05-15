@@ -58,20 +58,20 @@ void setup(void)
   rtc.begin();
   lcd.begin(20,4);
   //EEPROM Test
-  /*byte rcvData[4];
-  for(int i = 0; i < 4; i++)
+  /*byte rcvData[40];
+  for(int i = 0; i < 40; i++)
   {
-    WriteEEPROM(i,0);
+    WriteEEPROM(i,255);
   }
-  for(int i = 0; i < 4; i++)
+  for(int i = 0; i < 40; i++)
   {
     rcvData[i] = ReadEEPROM(i);
     Serial.println(rcvData[i],DEC);
-  }*/
-  /*WriteEEPROM(100,0);
-  byte rcvData = ReadEEPROM(100);
+  }
+  WriteEEPROM(100,0);
+  byte rcv = ReadEEPROM(100);
   Serial.print("data = ");
-  Serial.println(rcvData,DEC);*/
+  Serial.println(rcv,DEC);*/
 }
 
 void loop(void) 
@@ -81,10 +81,7 @@ void loop(void)
   static int minute;
   irRecv_t irValue = GetIRRemoteVal(irReceiver);
   //Checking for alarm
-  for(int alarm = 0; alarm < NUM_OF_ALARMS; alarm++)
-  {
-    AlarmGenerator(rtc,alarm);  
-  }
+  CheckAlarms(rtc);  
   //Executing state machine
   switch(state)
   {
@@ -98,19 +95,16 @@ void loop(void)
       StateFunc_AlarmMenu(state,irValue,lcd);
       break;
     case STATE_SETALARM:
-      StateFunc_SetAlarm(state,irValue,lcd,irReceiver);
-      break;
-    case STATE_CHECKALARM:
-      StateFunc_CheckAlarm(state,irValue,lcd);
+      StateFunc_SetAlarm(state,irValue,lcd,rtc,irReceiver);
       break;
     case STATE_DELETEALARM:
-      StateFunc_DeleteAlarm(state,irValue,lcd);
+      StateFunc_DeleteAlarm(state,irValue,lcd,rtc,irReceiver);
       break;
     case STATE_GAMEMENU:
       StateFunc_GameMenu(state,irValue,lcd);
       break;
     case STATE_PLAYGAME:
-      StateFunc_PlayGame(state,irValue,lcd,irReceiver);
+      StateFunc_PlayGame(state,irValue,lcd,rtc,irReceiver);
       break;
     case STATE_SONGMENU:
       StateFunc_SongMenu(state,irValue,lcd);

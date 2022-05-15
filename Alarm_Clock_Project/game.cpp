@@ -1,8 +1,10 @@
 #include <Arduino.h>
 #include <IRremote.h>
 #include <LiquidCrystal.h>
+#include "RTClib.h" //Version 1.3.3
 #include "remote.h"
 #include "game.h"
+#include "alarm.h"
 
 //Constants for the game board
 #define NUM_ROWS  3
@@ -153,7 +155,7 @@ static gameResult_t CheckForDiagonalWin(char gameBoard[NUM_ROWS]
   return result;
 }
 
-void PlayGame(LiquidCrystal& lcd,IRrecv& irReceiver)
+void PlayGame(LiquidCrystal& lcd,RTC_DS3231& rtc,IRrecv& irReceiver)
 {
   lcd.clear();
   lcd.setCursor(1,3);
@@ -175,6 +177,7 @@ void PlayGame(LiquidCrystal& lcd,IRrecv& irReceiver)
   player_t player = PLAYER1;
   while(1)
   {
+    CheckAlarms(rtc);
     ShowGameBoard(lcd,gameBoard);
     irRecv_t irValue = GetIRRemoteVal(irReceiver);
     char pressedKey = GetIRKeyPress(irValue);
