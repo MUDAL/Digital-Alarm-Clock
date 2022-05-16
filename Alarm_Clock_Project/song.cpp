@@ -19,7 +19,7 @@ void PlaySong_TakeOnMe(void)
   };  
   const int songLength = sizeof(melody)/sizeof(melody[0]);
   
-  for (int thisNote = 0; thisNote < songLength; thisNote++)
+  for(int thisNote = 0; thisNote < songLength; thisNote++)
   {
     // determine the duration of the notes that the computer understands
     // divide 1000 by the value, so the first note lasts for 1000/8 milliseconds
@@ -52,9 +52,9 @@ void PlaySong_Birthday(void)
   const int songLength = sizeof(melody)/sizeof(melody[0]);
   const int tempo = 25;
   
-  for (int thisNote = 0; thisNote < songLength; thisNote++)
+  for(int thisNote = 0; thisNote < songLength; thisNote++)
   {
-    if (melody[thisNote] != PAUSE) 
+    if(melody[thisNote] != PAUSE) 
     {
       tone(BUZZER_PIN,melody[thisNote]);
       delay(durations[thisNote] * tempo);
@@ -83,7 +83,7 @@ void PlaySong_Starwars(void)
     6, 6, 6, 1, 1, 6, 6, 6, 1, 2, 6, 6, 6, 1, 2, 6, 6, 6, 1
   };
   //iterate over the notes of the melody
-  for (int thisNote = 0 ; thisNote < 19; thisNote++) 
+  for(int thisNote = 0 ; thisNote < 19; thisNote++) 
   {
     //to calculate the note duration, take one second. Divided by the note type
     int duration = 1000 / durations[thisNote];
