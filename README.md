@@ -1,9 +1,9 @@
-# Alarm Clock  
-This project is an alarm clock with the following features:  
-1. Time  
-2. Alarm  
+# Alarm Clock Project
+Project features:  
+1. Time
+2. Alarm 
 3. Tic-tac-toe game played with an IR remote  
-4. Music (3 songs)  
+4. Music (3 songs)    
 It was developed for a classmate and friend of mine.  
 
 ## Credits (For EEPROM [AT24C32] library implementation)  
