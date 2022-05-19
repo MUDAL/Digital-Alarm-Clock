@@ -1,5 +1,28 @@
 #include "app.h"
 
+//Scrolling (navigating the screen)
+typedef enum
+{
+  SCROLL_UP = 0,
+  SCROLL_DOWN
+}scroll_t;
+
+static void Scroll(scroll_t dir,int& param,int limit)
+{
+  if(param != limit)
+  {
+    switch(dir)
+    {
+      case SCROLL_UP:
+        param--;
+        break;
+      case SCROLL_DOWN:
+        param++;
+        break;
+    }
+  }  
+}
+
 //Setting time
 static void SetHour(int& time,LiquidCrystal& lcd,RTC_DS3231& rtc,IRrecv& irReceiver)
 {
@@ -7,7 +30,7 @@ static void SetHour(int& time,LiquidCrystal& lcd,RTC_DS3231& rtc,IRrecv& irRecei
   lcd.print('>');  
   while(1)
   {
-    CheckAlarms(rtc); 
+    CheckAlarms(lcd,rtc); 
     DateTime dateTime = rtc.now();
     irRecv_t irValue = GetIRRemoteVal(irReceiver);
     time %= 24; //24-hour format (00-23)
@@ -43,7 +66,7 @@ static void SetMinute(int& time,LiquidCrystal& lcd,RTC_DS3231& rtc,IRrecv& irRec
   lcd.print('>');  
   while(1)
   {
-    CheckAlarms(rtc);
+    CheckAlarms(lcd,rtc);
     DateTime dateTime = rtc.now();
     irRecv_t irValue = GetIRRemoteVal(irReceiver);
     time %= 60; //60-minutes (00-59)

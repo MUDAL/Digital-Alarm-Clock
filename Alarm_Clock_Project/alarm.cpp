@@ -13,7 +13,7 @@
 #define ALARMSLOT_EEPROMADDR  100
 #define EMPTY_EEPROM          255
 
-static void AlarmGenerator(RTC_DS3231& rtc,int slot)
+static void AlarmGenerator(LiquidCrystal& lcd,RTC_DS3231& rtc,int slot)
 {
   DateTime dateTime = rtc.now();
   int currentHour = dateTime.hour();
@@ -24,6 +24,13 @@ static void AlarmGenerator(RTC_DS3231& rtc,int slot)
   if((currentHour == alarmHour)&&(currentMinute == alarmMinute)&&(currentSecond == 0))
   {
     tone(BUZZER_PIN,250); //250Hz alarm sound  
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("Hey, there's work");
+    lcd.setCursor(0,1);
+    lcd.print("to do!!!!!");
+    delay(6000);
+    lcd.clear();
   }
 }
 
@@ -33,7 +40,7 @@ void SetAlarmHour(int& hour,LiquidCrystal& lcd,RTC_DS3231& rtc,IRrecv& irReceive
   lcd.print('>');
   while(1)
   {
-    CheckAlarms(rtc);
+    CheckAlarms(lcd,rtc);
     irRecv_t irValue = GetIRRemoteVal(irReceiver);
     hour %= 24; //24-hour format (00-23)
     lcd.setCursor(8,0);
@@ -65,7 +72,7 @@ void SetAlarmMinute(int& minute,LiquidCrystal& lcd,RTC_DS3231& rtc,IRrecv& irRec
   lcd.print('>');
   while(1)
   {
-    CheckAlarms(rtc);
+    CheckAlarms(lcd,rtc);
     irRecv_t irValue = GetIRRemoteVal(irReceiver);
     minute %= 60; //60-minutes (00-59)
     lcd.setCursor(10,1);
@@ -118,11 +125,11 @@ void StoreAlarm(int& hour,int& minute,LiquidCrystal& lcd)
   delay(2500);
 }
 
-void CheckAlarms(RTC_DS3231& rtc)
+void CheckAlarms(LiquidCrystal& lcd,RTC_DS3231& rtc)
 {
   for(int alarm = 0; alarm < NUM_OF_ALARMS; alarm++)
   {
-    AlarmGenerator(rtc,alarm);  
+    AlarmGenerator(lcd,rtc,alarm);  
   }  
 }
 
@@ -133,7 +140,7 @@ void SelectAlarmSlot(int& slot,LiquidCrystal& lcd,RTC_DS3231& rtc,IRrecv& irRece
   int prevSlot = 0;
   while(1)
   {
-    CheckAlarms(rtc);
+    CheckAlarms(lcd,rtc);
     irRecv_t irValue = GetIRRemoteVal(irReceiver);
     slot %= NUM_OF_ALARMS;
     if(prevSlot != slot)

@@ -25,22 +25,6 @@ static void DisplayRowHeadings(LiquidCrystal& lcd,char** rowHeading,int numOfRow
   }
 }
 
-void Scroll(scroll_t dir,int& param,int limit)
-{
-  if(param != limit)
-  {
-    switch(dir)
-    {
-      case SCROLL_UP:
-        param--;
-        break;
-      case SCROLL_DOWN:
-        param++;
-        break;
-    }
-  }  
-}
-
 void DisplayAlignedValue(LiquidCrystal& lcd,int t,char separator)
 {
   //t = unaligned value

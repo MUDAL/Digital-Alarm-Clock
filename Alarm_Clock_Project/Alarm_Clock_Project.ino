@@ -57,7 +57,7 @@ void loop(void)
   static int minute;
   irRecv_t irValue = GetIRRemoteVal(irReceiver);
   //Checking for alarm
-  CheckAlarms(rtc);  
+  CheckAlarms(lcd,rtc);  
   //Executing state machine
   switch(state)
   {

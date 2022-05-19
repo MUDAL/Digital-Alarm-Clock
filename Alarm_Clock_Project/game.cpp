@@ -177,7 +177,7 @@ void PlayGame(LiquidCrystal& lcd,RTC_DS3231& rtc,IRrecv& irReceiver)
   player_t player = PLAYER1;
   while(1)
   {
-    CheckAlarms(rtc);
+    CheckAlarms(lcd,rtc);
     ShowGameBoard(lcd,gameBoard);
     irRecv_t irValue = GetIRRemoteVal(irReceiver);
     char pressedKey = GetIRKeyPress(irValue);
