@@ -19,7 +19,7 @@ static void AlarmGenerator(LiquidCrystal& lcd,RTC_DS3231& rtc,int slot)
   int currentHour = dateTime.hour();
   int currentMinute = dateTime.minute();
   int currentSecond = dateTime.second();
-  int alarmHour = ReadEEPROM(slot * 2);
+  int alarmHour = ReadEEPROM(slot*2);
   int alarmMinute = ReadEEPROM(1 + (slot*2));
   if((currentHour == alarmHour)&&(currentMinute == alarmMinute)&&(currentSecond == 0))
   {
@@ -29,8 +29,7 @@ static void AlarmGenerator(LiquidCrystal& lcd,RTC_DS3231& rtc,int slot)
     lcd.print("Hey, there's work");
     lcd.setCursor(0,1);
     lcd.print("to do!!!!!");
-    delay(6000);
-    lcd.clear();
+    while(1){} //loop breaks due to reset button
   }
 }
 
