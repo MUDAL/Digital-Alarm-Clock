@@ -28,5 +28,11 @@ It was developed for a classmate and friend of mine.
 3. https://forum.arduino.cc/t/halloween-and-star-wars-on-two-push-botton-and-buzzer/630316  
 4. https://docs.arduino.cc/built-in-examples/digital/toneMelody  
 
+## Additional info  
+In order to prevent conflict between the tone and IRremote libraries,    
+the IRremote library (boarddefs.h) was modified to use TIMER1 instead of TIMER2.  
+(TIMER2 is already used by the tone library).  
+
+
 
 
