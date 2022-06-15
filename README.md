@@ -31,7 +31,13 @@ It was developed for a classmate and friend of mine.
 ## Additional info  
 In order to prevent conflict between the tone and IRremote libraries,    
 the IRremote library (boarddefs.h) was modified to use TIMER1 instead of TIMER2.  
-(TIMER2 is already used by the tone library).  
+(TIMER2 is already used by the tone library).    
+
+## Video demonstration  
+Link: https://www.youtube.com/playlist?list=PLVOrZvUg2mh9ulOvskMB-cN14TpT2BzGC  
+
+
+
 
 
 
