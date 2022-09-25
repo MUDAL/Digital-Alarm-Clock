@@ -37,7 +37,7 @@ the IRremote library (boarddefs.h) was modified to use TIMER1 instead of TIMER2.
 Link: https://www.youtube.com/playlist?list=PLVOrZvUg2mh9ulOvskMB-cN14TpT2BzGC  
 
 ## Prototype  
-![IMG_20220519_113241 (1)](https://user-images.githubusercontent.com/46250887/192157752-c84ae8aa-7595-413d-ad21-161695fc226b.jpg)  |  ![IMG_20220519_113041 (1)](https://user-images.githubusercontent.com/46250887/192157779-8ac1becc-17e5-45ea-b57b-b7bb56d67344.jpg)
+![IMG_20220519_113241 (1)](https://user-images.githubusercontent.com/46250887/192157752-c84ae8aa-7595-413d-ad21-161695fc226b.jpg)  ![IMG_20220519_113041 (1)](https://user-images.githubusercontent.com/46250887/192157779-8ac1becc-17e5-45ea-b57b-b7bb56d67344.jpg)
 
 
 
